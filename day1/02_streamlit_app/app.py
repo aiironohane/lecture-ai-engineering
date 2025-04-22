@@ -11,7 +11,7 @@ from config import MODEL_NAME
 from huggingface_hub import HfFolder
 
 # --- アプリケーション設定 ---
-st.set_page_config(page_title="Gemma Chatbot", layout="wide")
+st.set_page_config(page_title="Whisper ASR", layout="wide")
 
 # --- 初期化処理 ---
 # NLTKデータのダウンロード（初回起動時など）
@@ -31,12 +31,9 @@ def load_model():
     try:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         st.info(f"Using device: {device}") # 使用デバイスを表示
-        pipe = pipeline(
-            "text-generation",
-            model=MODEL_NAME,
-            model_kwargs={"torch_dtype": torch.bfloat16},
-            device=device
-        )
+        pipe = pipeline("automatic-speech-recognition", 
+                        model=MODEL_NAME,
+                        device=device)
         st.success(f"モデル '{MODEL_NAME}' の読み込みに成功しました。")
         return pipe
     except Exception as e:
@@ -46,27 +43,27 @@ def load_model():
 pipe = llm.load_model()
 
 # --- Streamlit アプリケーション ---
-st.title("Gemma 2 Chatbot with Feedback")
-st.write("Gemmaモデルを使用したチャットボットです。回答に対してフィードバックを行えます。")
+st.title("Whisper translate speech")
+st.write("Whisperモデルを使用した音声文字おこしアプリです。")
 st.markdown("---")
 
 # --- サイドバー ---
 st.sidebar.title("ナビゲーション")
 # セッション状態を使用して選択ページを保持
 if 'page' not in st.session_state:
-    st.session_state.page = "チャット" # デフォルトページ
+    st.session_state.page = "音声文字おこし" # デフォルトページ
 
 page = st.sidebar.radio(
     "ページ選択",
-    ["チャット", "履歴閲覧", "サンプルデータ管理"],
+    ["音声文字おこし", "履歴閲覧", "サンプルデータ管理"],
     key="page_selector",
-    index=["チャット", "履歴閲覧", "サンプルデータ管理"].index(st.session_state.page), # 現在のページを選択状態にする
+    index=["音声文字おこし", "履歴閲覧", "サンプルデータ管理"].index(st.session_state.page), # 現在のページを選択状態にする
     on_change=lambda: setattr(st.session_state, 'page', st.session_state.page_selector) # 選択変更時に状態を更新
 )
 
 
 # --- メインコンテンツ ---
-if st.session_state.page == "チャット":
+if st.session_state.page == "":
     if pipe:
         ui.display_chat_page(pipe)
     else:
