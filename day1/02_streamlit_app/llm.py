@@ -13,7 +13,7 @@ def load_model():
     """ASRモデルをロードする"""
     try:
 
-        # アクセストークンを保存
+        # アクセストークンの保存
         hf_token = st.secrets["huggingface"]["token"]
         
         device = "cuda" if torch.cuda.is_available() else "cpu"
