@@ -1,3 +1,3 @@
 # config.py
-DB_FILE = "chat_feedback.db"
+DB_FILE = "asr_results.db"
 MODEL_NAME = "openai/whisper-base"

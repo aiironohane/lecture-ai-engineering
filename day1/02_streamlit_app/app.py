@@ -3,7 +3,7 @@ import streamlit as st
 import ui                   # UIモジュール
 import llm                  # LLMモジュール
 import database             # データベースモジュール
-import metrics              # 評価指標モジュール
+# import metrics              # 評価指標モジュール
 import data                 # データモジュール
 import torch
 from transformers import pipeline
@@ -15,13 +15,13 @@ st.set_page_config(page_title="Whisper ASR", layout="wide")
 
 # --- 初期化処理 ---
 # NLTKデータのダウンロード（初回起動時など）
-metrics.initialize_nltk()
+# metrics.initialize_nltk()
 
 # データベースの初期化（テーブルが存在しない場合、作成）
 database.init_db()
 
 # データベースが空ならサンプルデータを投入
-data.ensure_initial_data()
+# data.ensure_initial_data()
 
 # LLMモデルのロード（キャッシュを利用）
 # モデルをキャッシュして再利用
@@ -47,31 +47,33 @@ st.title("Whisper translate speech")
 st.write("Whisperモデルを使用した音声文字おこしアプリです。")
 st.markdown("---")
 
+
+# --- セッション状態初期化 ---
+if 'page' not in st.session_state:
+    st.session_state.page = "音声文字おこし"
+
 # --- サイドバー ---
 st.sidebar.title("ナビゲーション")
-# セッション状態を使用して選択ページを保持
-if 'page' not in st.session_state:
-    st.session_state.page = "音声文字おこし" # デフォルトページ
-
 page = st.sidebar.radio(
     "ページ選択",
     ["音声文字おこし", "履歴閲覧", "サンプルデータ管理"],
-    key="page_selector",
-    index=["音声文字おこし", "履歴閲覧", "サンプルデータ管理"].index(st.session_state.page), # 現在のページを選択状態にする
-    on_change=lambda: setattr(st.session_state, 'page', st.session_state.page_selector) # 選択変更時に状態を更新
+    index=["音声文字おこし", "履歴閲覧", "サンプルデータ管理"].index(st.session_state.page),
+    key="page_selector"
 )
+st.session_state.page = page  # 状態更新
 
 
-# --- メインコンテンツ ---
-if st.session_state.page == "":
+# --- メイン表示 ---
+if st.session_state.page == "音声文字おこし":
     if pipe:
-        ui.display_chat_page(pipe)
+        ui.display_transcription_page(pipe)
     else:
-        st.error("チャット機能を利用できません。モデルの読み込みに失敗しました。")
+        st.error("モデルの読み込みに失敗しました。")
 elif st.session_state.page == "履歴閲覧":
-    ui.display_history_page()
+    ui.display_transcription_history()
 elif st.session_state.page == "サンプルデータ管理":
     ui.display_data_page()
+
 
 # --- フッターなど（任意） ---
 st.sidebar.markdown("---")
