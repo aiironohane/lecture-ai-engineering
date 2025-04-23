@@ -3,8 +3,6 @@ import streamlit as st
 import ui                   # UIモジュール
 import llm                  # LLMモジュール
 import database             # データベースモジュール
-# import metrics              # 評価指標モジュール
-import data                 # データモジュール
 import torch
 from transformers import pipeline
 from config import MODEL_NAME
@@ -13,21 +11,14 @@ from huggingface_hub import HfFolder
 # --- アプリケーション設定 ---
 st.set_page_config(page_title="Whisper ASR", layout="wide")
 
-# --- 初期化処理 ---
-# NLTKデータのダウンロード（初回起動時など）
-# metrics.initialize_nltk()
-
 # データベースの初期化（テーブルが存在しない場合、作成）
 database.init_db()
 
-# データベースが空ならサンプルデータを投入
-# data.ensure_initial_data()
-
-# LLMモデルのロード（キャッシュを利用）
+# ASRモデルのロード（キャッシュを利用）
 # モデルをキャッシュして再利用
 @st.cache_resource
 def load_model():
-    """LLMモデルをロードする"""
+    """ASRモデルをロードする"""
     try:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         st.info(f"Using device: {device}") # 使用デバイスを表示
@@ -51,6 +42,7 @@ st.markdown("---")
 # --- セッション状態初期化 ---
 if 'page' not in st.session_state:
     st.session_state.page = "音声文字おこし"
+
 
 # --- サイドバー ---
 st.sidebar.title("ナビゲーション")

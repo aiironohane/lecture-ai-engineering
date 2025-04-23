@@ -44,24 +44,14 @@ def display_transcription_history():
     st.dataframe(history_df, use_container_width=True)
 
 
-
-
-
-# --- サンプルデータ管理ページのUI ---
+# --- データ管理ページのUI ---
 def display_data_page():
-    """サンプルデータ管理ページのUIを表示する"""
+    """データ管理ページのUIを表示する"""
     st.subheader("サンプル評価データの管理")
     count = get_db_count()
     st.write(f"現在のデータベースには {count} 件のレコードがあります。")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("サンプルデータを追加", key="create_samples"):
-            create_sample_evaluation_data()
-            st.rerun() # 件数表示を更新
-
-    with col2:
-        # 確認ステップ付きのクリアボタン
-        if st.button("データベースをクリア", key="clear_db_button"):
-            if clear_db(): # clear_db内で確認と実行を行う
-                st.rerun() # クリア後に件数表示を更新
+    st.subheader("データベースをクリア")
+    if st.button("データベースをクリア", key="clear_db_button"):
+        if clear_db(): # clear_db内で確認と実行を行う
+            st.rerun() # クリア後に件数表示を更新

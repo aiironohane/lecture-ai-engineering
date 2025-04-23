@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 import streamlit as st
 from config import DB_FILE
-# from metrics import calculate_metrics # metricsを計算するために必要
+
 
 # --- スキーマ定義 ---
 TABLE_NAME = "asr_history"
@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS asr_history (
     response_time REAL
 )
 '''
+
 
 # --- データベース初期化 ---
 def init_db():
